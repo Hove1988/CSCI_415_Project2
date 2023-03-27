@@ -60,6 +60,7 @@ class md5{
         /******** Helper functions ********/
         string toBitString(string msg); //Convert string to bit string
         void padding(string &msg); //Append 1, 0s, and original message length
+        unsigned long power(int x, int y);
 
     public:
 

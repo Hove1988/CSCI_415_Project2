@@ -9,11 +9,19 @@
 
 #include "MD5.h"
 #include <string>
+#include <iostream>
+
+using namespace std;
+
+
 
 void md5::padding(string& msg) {
+	cout << "Entering padding\n";
+	
 	unsigned long length = msg.length(); //liong // loing
 	string lengthStr = "";
 	bool first = true;
+	
 	while (msg.length() % 512 != 448) {
 		if (first) {
 			msg.push_back('1');
@@ -24,19 +32,33 @@ void md5::padding(string& msg) {
 		}
 	}
 
+	cout << "Entering second for loop\n";
 	for (int i = 64; i >= 1; i--) {
-		if (length % (unsigned long)std::pow(2, i)) {
+		cout << "In second for loop: " << i << endl;
+		if (length % power(2, i)) {
+			cout << "1\n";
 			lengthStr.push_back('1');
 		}
 		else {
+			cout << "0\n";
 			lengthStr.push_back('0');
 		}
 	}
+	cout << "Appending\n";
 	msg.append(lengthStr);
+	cout << "Exiting padding\n";
+}
+
+unsigned long md5::power(int x, int y) {
+	unsigned long z = x;
+	for (int i = 1; i < y; i++) {
+		z *= y;
+	}
+	cout << z << endl;
+	return z;
 }
 
 string md5::toBitString(string msg) {
-	char temp = '\0';
 	string bitStr = "";
 
 	for (char temp : msg) {
@@ -51,11 +73,12 @@ string md5::toBitString(string msg) {
 	}
 
 	padding(bitStr);
+	cout << "Exiting toBitString\n";
 	return bitStr;
 }
 
 bool md5::hash(string msg, string& hashCode) {
-
+	cout << "Entering hash!\n";
 	int A = 0x67425301; //j
 	int B = 0xefcdab89; //k
 	int C = 0x98badcfe; //l
@@ -67,6 +90,7 @@ bool md5::hash(string msg, string& hashCode) {
 	string tempChunk;
 	vector<int> fragments;
 
+	cout << "Entering big for loop\n";
 	for (int i = 0; i < bitString.length() / 512; i++) {
 		tempChunk = "";
 		for (int j = 0; j < 512; j++) {
@@ -86,6 +110,7 @@ bool md5::hash(string msg, string& hashCode) {
 		int b = B;
 		int c = C;
 		int d = D;
+		cout << "Entering main Loop!\n";
 		for (int j = 0; j < 64; j++) {	//"Main Loop"
 			int f, g;
 			if (0 <= j && j <= 15) {
