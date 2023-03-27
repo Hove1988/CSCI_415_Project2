@@ -17,7 +17,7 @@ using namespace std;
 #ifndef MD5_H
 #define MD5_H
 
-#define LCS(x, y) (((x) << (y)) | ((x) >> (32 - (y))))
+#define LCS(x, y) (((x) << (y)) | ((x) >> (64 - (y))))
 
 class md5{
     private:

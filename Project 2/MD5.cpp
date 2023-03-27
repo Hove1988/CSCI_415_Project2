@@ -16,7 +16,7 @@ using namespace std;
 
 
 void md5::padding(string& msg) {
-	cout << "Entering padding\n";
+	//cout << "Entering padding\n";
 	
 	unsigned long length = msg.length(); //liong // loing
 	string lengthStr = "";
@@ -32,29 +32,32 @@ void md5::padding(string& msg) {
 		}
 	}
 
-	cout << "Entering second for loop\n";
+	//cout << "Entering second for loop\n";
 	for (int i = 64; i >= 1; i--) {
-		cout << "In second for loop: " << i << endl;
-		if (length % power(2, i)) {
-			cout << "1\n";
+		//cout << "In second for loop: " << i << endl;
+		if (length & power(2, i)) {
+			//cout << "1\n";
 			lengthStr.push_back('1');
 		}
 		else {
-			cout << "0\n";
+			//cout << "0\n";
 			lengthStr.push_back('0');
 		}
 	}
-	cout << "Appending\n";
+	//cout << "Appending\n";
 	msg.append(lengthStr);
-	cout << "Exiting padding\n";
+	//cout << "Exiting padding\n";
 }
 
 unsigned long md5::power(int x, int y) {
-	unsigned long z = x;
-	for (int i = 1; i < y; i++) {
-		z *= y;
+	//cout << "x: " << x << "y: " << y << endl;
+	unsigned long long z = x;
+	//cout << "z original: "<< z << endl;
+	for (int i = 1; i < y-1; i++) {
+		//cout << i << ' ';
+		z *= x;
+		//cout << i << "th z: " << z << endl;
 	}
-	cout << z << endl;
 	return z;
 }
 
@@ -73,7 +76,7 @@ string md5::toBitString(string msg) {
 	}
 
 	padding(bitStr);
-	cout << "Exiting toBitString\n";
+	//cout << "Exiting toBitString\n";
 	return bitStr;
 }
 
@@ -91,6 +94,7 @@ bool md5::hash(string msg, string& hashCode) {
 	vector<int> fragments;
 
 	cout << "Entering big for loop\n";
+	cout << bitString << endl;
 	for (int i = 0; i < bitString.length() / 512; i++) {
 		tempChunk = "";
 		for (int j = 0; j < 512; j++) {
@@ -98,7 +102,7 @@ bool md5::hash(string msg, string& hashCode) {
 		}
 		chunks.push_back(tempChunk);
 
-        for(int j = 0; j < 16; j++){
+        for(int j = 0; j < 15; j++){
             int tempFrag = 0;
             for(int k = 0; k < 32; k++){
                 tempFrag += atoi(&tempChunk[(k + (32 * j))]) * pow(2, k);
@@ -106,10 +110,10 @@ bool md5::hash(string msg, string& hashCode) {
             fragments.push_back(tempFrag);
         }
 
-		int a = A;
-		int b = B;
-		int c = C;
-		int d = D;
+		unsigned long a = A;
+		unsigned long b = B;
+		unsigned long c = C;
+		unsigned long d = D;
 		cout << "Entering main Loop!\n";
 		for (int j = 0; j < 64; j++) {	//"Main Loop"
 			int f, g;
@@ -133,13 +137,14 @@ bool md5::hash(string msg, string& hashCode) {
 			a = d;
 			d = c;
 			c = b;
-			b + LCS(f, x[i]);
+			b = b + LCS(f, x[i]);
 		}
 		A += a;
 		B += b;
 		C += c;
         D += d;
 	}
+	cout << A << endl << B << endl << C << endl << D << endl;
 	hashCode.append(to_string(A));
 	hashCode.append(to_string(B));
 	hashCode.append(to_string(C));

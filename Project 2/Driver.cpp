@@ -16,7 +16,12 @@ int main(){
 
     string digest;
     cout << "Calling md5 hash\n";
-    md.hash("password", digest);
+    md.hash("P", digest);
+
+    string digest2;
+    cout << "Calling md5 hash 2\n";
+    md.hash("Password", digest2);
 
     cout << "Hash code: " << digest << endl;
+    cout << "Hash code: " << digest2 << endl;
 }
