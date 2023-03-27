@@ -4,7 +4,7 @@
 *
 *	Authors: Jake Haapoja, Joseph Hoversten, Nathan O'Connor, Zach Sawicki
 *
-*	© 2023
+*	ï¿½ 2023
 ********************************************************************************/
 
 #include "MD5.h"
@@ -24,10 +24,8 @@ void md5::padding(string& msg) {
 		}
 	}
 
-	length %= pow(2, 64);
-
 	for (int i = 64; i >= 1; i--) {
-		if (length % pow(2, i)) {
+		if (length % (unsigned long)std::pow(2, i)) {
 			lengthStr.push_back('1');
 		}
 		else {
@@ -37,13 +35,13 @@ void md5::padding(string& msg) {
 	msg.append(lengthStr);
 }
 
-string toBitString(string msg) {
-	char temp = '';
+string md5::toBitString(string msg) {
+	char temp = '\0';
 	string bitStr = "";
 
-	for (temp : msg) {
+	for (char temp : msg) {
 		for (int i = 8; i >= 1; i--) {
-			if ((int)temp % pow(2, i)) {
+			if ((int)temp % (unsigned long)std::pow(2, i)) {
 				bitStr.push_back('1');
 			}
 			else {
@@ -53,12 +51,8 @@ string toBitString(string msg) {
 	}
 
 	padding(bitStr);
-
 	return bitStr;
 }
-
-
-
 
 bool md5::hash(string msg, string& hashCode) {
 
@@ -83,7 +77,7 @@ bool md5::hash(string msg, string& hashCode) {
         for(int j = 0; j < 16; j++){
             int tempFrag = 0;
             for(int k = 0; k < 32; k++){
-                tempFrag += atoi(tempChunk[(k + (32 * j))]) * pow(2, k);
+                tempFrag += atoi(&tempChunk[(k + (32 * j))]) * pow(2, k);
             }
             fragments.push_back(tempFrag);
         }
@@ -108,7 +102,7 @@ bool md5::hash(string msg, string& hashCode) {
 			}
 			else {
 				f = I(b, c, d);
-				g = (y * i) % 16;
+				g = 7 * i % 16;
 			}
 			f = f + a + y[i] + fragments[g];
 			a = d;
@@ -121,10 +115,12 @@ bool md5::hash(string msg, string& hashCode) {
 		C += c;
         D += d;
 	}
-	hashCode.append(A);
-	hashCode.append(B);
-	hashCode.append(C);
-	hashCode.append(D);
+	hashCode.append(to_string(A));
+	hashCode.append(to_string(B));
+	hashCode.append(to_string(C));
+	hashCode.append(to_string(D));
+
+	cout << "Appended hash code\n";
 
 	return true;
 }
