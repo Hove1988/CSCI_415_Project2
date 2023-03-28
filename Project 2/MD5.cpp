@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 *
 *	MD5.cpp
 *
@@ -17,11 +17,11 @@ using namespace std;
 
 void md5::padding(string& msg) {
 	//cout << "Entering padding\n";
-	
+
 	unsigned long length = msg.length(); //liong // loing
 	string lengthStr = "";
 	bool first = true;
-	
+
 	while (msg.length() % 512 != 448) {
 		if (first) {
 			msg.push_back('1');
@@ -53,7 +53,7 @@ unsigned long md5::power(int x, int y) {
 	//cout << "x: " << x << "y: " << y << endl;
 	unsigned long long z = x;
 	//cout << "z original: "<< z << endl;
-	for (int i = 1; i < y-1; i++) {
+	for (int i = 1; i < y - 1; i++) {
 		//cout << i << ' ';
 		z *= x;
 		//cout << i << "th z: " << z << endl;
@@ -80,43 +80,84 @@ string md5::toBitString(string msg) {
 	return bitStr;
 }
 
-bool md5::hash(string msg, string& hashCode) {
-	cout << "Entering hash!\n";
-	int A = 0x67425301; //j
-	int B = 0xefcdab89; //k
-	int C = 0x98badcfe; //l
-	int D = 0x10325476; //m
+string md5::decToHexa(unsigned long n)
+{
+    // ans string to store hexadecimal number
+    string ans = "";
+    
+    while (n != 0) {
+        // remainder variable to store remainder
+        int rem = 0;
+          
+        // ch variable to store each character
+        char ch;
+        // storing remainder in rem variable.
+        rem = n % 16;
+  
+        // check if temp < 10
+        if (rem < 10) {
+            ch = rem + 48;
+        }
+        else {
+            ch = rem + 55;
+        }
+          
+        // updating the ans string with the character variable
+        ans += ch;
+        n = n / 16;
+    }
+      
+    // reversing the ans string to get the final result
+    int i = 0, j = ans.size() - 1;
+    while(i <= j)
+    {
+      swap(ans[i], ans[j]);
+      i++;
+      j--;
+    }
+    return ans;
+}
 
-    string bitString = toBitString(msg);
-    vector<string> chunks;
+unsigned long md5::lcs(unsigned long base, unsigned long shift) {
+
+	unsigned long temp = (base << shift) | (base >> (64 - shift));
+	return temp;
+}
+
+bool md5::hash(string msg, string& hashCode) {
+	//cout << "Entering hash!\n";
+	unsigned long A = 0x67425301; //j
+	unsigned long B = 0xefcdab89; //k
+	unsigned long C = 0x98badcfe; //l
+	unsigned long D = 0x10325476; //m
+
+	string bitString = toBitString(msg);
+	vector<string> chunks;
 
 	string tempChunk;
 	vector<int> fragments;
-
-	cout << "Entering big for loop\n";
-	cout << bitString << endl;
-	for (int i = 0; i < bitString.length() / 512; i++) {
+	for (int i = 0; i < bitString.length() / 512; i++){
 		tempChunk = "";
 		for (int j = 0; j < 512; j++) {
 			tempChunk += bitString[(i * 512) + j];
 		}
 		chunks.push_back(tempChunk);
 
-        for(int j = 0; j < 15; j++){
-            int tempFrag = 0;
-            for(int k = 0; k < 32; k++){
-                tempFrag += atoi(&tempChunk[(k + (32 * j))]) * pow(2, k);
-            }
-            fragments.push_back(tempFrag);
-        }
+		for (int j = 0; j < 15; j++) {
+			int tempFrag = 0;
+			for (int k = 0; k < 32; k++) {
+				int temp = tempChunk[(k + (32 * j))] - '0';
+				tempFrag += temp * pow(2, k);
+			}
+			fragments.push_back(tempFrag);
+		}
 
 		unsigned long a = A;
 		unsigned long b = B;
 		unsigned long c = C;
 		unsigned long d = D;
-		cout << "Entering main Loop!\n";
-		for (int j = 0; j < 64; j++) {	//"Main Loop"
-			int f, g;
+		for (int j = 0; j < 64; j++) {
+			unsigned long f, g;
 			if (0 <= j && j <= 15) {
 				f = F(b, c, d);
 				g = i;
@@ -137,20 +178,20 @@ bool md5::hash(string msg, string& hashCode) {
 			a = d;
 			d = c;
 			c = b;
-			b = b + LCS(f, x[i]);
+			b = b + lcs(f, x[i]);
 		}
 		A += a;
 		B += b;
 		C += c;
-        D += d;
+		D += d;
 	}
-	cout << A << endl << B << endl << C << endl << D << endl;
-	hashCode.append(to_string(A));
-	hashCode.append(to_string(B));
-	hashCode.append(to_string(C));
-	hashCode.append(to_string(D));
+	//cout << A << endl << B << endl << C << endl << D << endl;
+	hashCode.append(decToHexa(A));
+	hashCode.append(decToHexa(B));
+	hashCode.append(decToHexa(C));
+	hashCode.append(decToHexa(D));
 
-	cout << "Appended hash code\n";
+	//cout << "Appended hash code\n";
 
 	return true;
 }

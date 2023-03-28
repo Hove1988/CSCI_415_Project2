@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 *
 *	Driver.cpp
 *
@@ -10,13 +10,13 @@
 
 using namespace std;
 
-int main(){
+int main() {
     cout << "Creating md5 object\n";
     md5 md;
 
     string digest;
     cout << "Calling md5 hash\n";
-    md.hash("P", digest);
+    md.hash("P123", digest);
 
     string digest2;
     cout << "Calling md5 hash 2\n";
