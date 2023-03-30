@@ -17,17 +17,15 @@ using namespace std;
 #ifndef MD5_H
 #define MD5_H
 
-class md5 {
+class MD5 {
 private:
 
-
-
-    const int x[64] = { 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12,
+    static constexpr int x[64] = { 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12,
     17, 22, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14,
     20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
     6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21 };
 
-    const unsigned y[64] = {
+    static constexpr unsigned y[64] = {
     0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
     0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
     0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -48,24 +46,24 @@ private:
 
 
     /********** MD5 operations **********/
-    inline unsigned long F(unsigned long x, unsigned long y, unsigned long z) { return ((x & y) | (~x & z)); }
-    inline unsigned long G(unsigned long x, unsigned long y, unsigned long z) { return ((x & z) | (y & ~z)); }
-    inline unsigned long H(unsigned long x, unsigned long y, unsigned long z) { return (x ^ y ^ z); }
-    inline unsigned long I(unsigned long x, unsigned long y, unsigned long z) { return (y ^ (x | ~z)); }
+    static inline unsigned long F(unsigned long x, unsigned long y, unsigned long z) { return ((x & y) | (~x & z)); }
+    static inline unsigned long G(unsigned long x, unsigned long y, unsigned long z) { return ((x & z) | (y & ~z)); }
+    static inline unsigned long H(unsigned long x, unsigned long y, unsigned long z) { return (x ^ y ^ z); }
+    static inline unsigned long I(unsigned long x, unsigned long y, unsigned long z) { return (y ^ (x | ~z)); }
 
     //void append1(string msg);
 
     /******** Helper functions ********/
-    string toBitString(string msg); //Convert string to bit string
-    void padding(string& msg); //Append 1, 0s, and original message length
-    unsigned long power(int x, int y);
-    string decToHexa(unsigned long n);
-    unsigned long lcs(unsigned long, unsigned long);
+    static string toBitString(string msg); //Convert string to bit string
+    static void padding(string& msg); //Append 1, 0s, and original message length
+    static unsigned long power(int x, int y);
+    static string decToHexa(unsigned long n);
+    static unsigned long lcs(unsigned long, unsigned long);
 
 public:
 
-    inline md5() {};
-    bool hash(string msg, string& hashCode);
+    inline MD5() {};
+    static bool hash(string msg, string& hashCode);
 };
 
 #endif

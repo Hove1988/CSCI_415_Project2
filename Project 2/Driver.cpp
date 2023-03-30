@@ -7,21 +7,84 @@
 *	� 2023
 ********************************************************************************/
 #include "MD5.h"
+#include "Password.h"
 
 using namespace std;
 
+bool createNewUser(Password&);
+bool verifyPass(Password&);
+bool rainbowAttack(Password&);
+
 int main() {
-    cout << "Creating md5 object\n";
-    md5 md;
+    
+    Password passData;
 
-    string digest;
-    cout << "Calling md5 hash\n";
-    md.hash("P123", digest);
+    passData.readPasswordFile("passwords.csv");
 
-    string digest2;
-    cout << "Calling md5 hash 2\n";
-    md.hash("Password", digest2);
+    int input = 0;
+    while (input != 4) {
+        string tempIn;
 
-    cout << "Hash code: " << digest << endl;
-    cout << "Hash code: " << digest2 << endl;
+        cout << "1. Add User " << endl;
+        cout << "2. Verify Password " << endl;
+        cout << "3. Perform Rainbow Attack " << endl;
+        cout << "4. Exit" << endl;
+        cout << "Input: ";
+
+        cin >> tempIn;
+        input = stoi(tempIn);
+
+        switch (input) {
+            case 1:
+                createNewUser(passData);
+                break;
+            case 2:
+                verifyPass(passData);
+                break;
+            case 3:
+                rainbowAttack(passData);
+                break;
+            default:
+                passData.writePasswordFile("passwords.csv");
+                return 0;
+        };
+    }
+}
+
+bool createNewUser(Password& pData){
+    string username, password;
+    cout << endl << "Enter Username: ";
+    cin >> username;
+    cout << "Enter password: ";
+    cin >> password;
+
+    if (pData.addUser(username, password)){
+        cout << endl << "Your user ID is: " << username << endl << endl;
+        return true;
+    }
+    cout << endl << "There was an error creating your user ID. returning to menu." << endl << endl;
+    return false;
+}
+
+bool verifyPass(Password& pData) {
+    string username, password;
+    cout << endl << "Enter Username: ";
+    cin >> username;
+    cout << "Enter password: ";
+    cin >> password;
+
+    if (pData.verifyPassword(username, password)) {
+        cout << "Successfully verified password" << endl << endl;
+        return true;
+    }
+    else {
+        cout << "Failed to verify password" << endl << endl;
+        return false;
+    }
+
+}
+
+bool rainbowAttack(Password& pData){
+    
+    return true;
 }

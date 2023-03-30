@@ -13,9 +13,7 @@
 
 using namespace std;
 
-
-
-void md5::padding(string& msg) {
+void MD5::padding(string& msg) {
 	//cout << "Entering padding\n";
 
 	unsigned long length = msg.length(); //liong // loing
@@ -49,7 +47,7 @@ void md5::padding(string& msg) {
 	//cout << "Exiting padding\n";
 }
 
-unsigned long md5::power(int x, int y) {
+unsigned long MD5::power(int x, int y) {
 	//cout << "x: " << x << "y: " << y << endl;
 	unsigned long long z = x;
 	//cout << "z original: "<< z << endl;
@@ -61,7 +59,7 @@ unsigned long md5::power(int x, int y) {
 	return z;
 }
 
-string md5::toBitString(string msg) {
+string MD5::toBitString(string msg) {
 	string bitStr = "";
 
 	for (char temp : msg) {
@@ -80,7 +78,7 @@ string md5::toBitString(string msg) {
 	return bitStr;
 }
 
-string md5::decToHexa(unsigned long n)
+string MD5::decToHexa(unsigned long n)
 {
     // ans string to store hexadecimal number
     string ans = "";
@@ -118,13 +116,13 @@ string md5::decToHexa(unsigned long n)
     return ans;
 }
 
-unsigned long md5::lcs(unsigned long base, unsigned long shift) {
+unsigned long MD5::lcs(unsigned long base, unsigned long shift) {
 
 	unsigned long temp = (base << shift) | (base >> (64 - shift));
 	return temp;
 }
 
-bool md5::hash(string msg, string& hashCode) {
+bool MD5::hash(string msg, string& hashCode) {
 	//cout << "Entering hash!\n";
 	unsigned long A = 0x67425301; //j
 	unsigned long B = 0xefcdab89; //k
@@ -143,7 +141,7 @@ bool md5::hash(string msg, string& hashCode) {
 		}
 		chunks.push_back(tempChunk);
 
-		for (int j = 0; j < 15; j++) {
+		for (int j = 0; j < 16; j++) {
 			int tempFrag = 0;
 			for (int k = 0; k < 32; k++) {
 				int temp = tempChunk[(k + (32 * j))] - '0';
