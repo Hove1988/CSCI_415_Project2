@@ -16,7 +16,7 @@ using namespace std;
 void MD5::padding(string& msg) {
 	//cout << "Entering padding\n";
 
-	unsigned long length = msg.length(); //liong // loing
+	unsigned long length = msg.length()/8; //liong // loing
 	string lengthStr = "";
 	bool first = true;
 
@@ -31,9 +31,9 @@ void MD5::padding(string& msg) {
 	}
 
 	//cout << "Entering second for loop\n";
-	for (int i = 64; i >= 1; i--) {
+	for (int i = 0; i < 64; i++) {
 		//cout << "In second for loop: " << i << endl;
-		if (length & power(2, i)) {
+		if (length & (unsigned long)pow(2, i)) {		//usnigned
 			//cout << "1\n";
 			lengthStr.push_back('1');
 		}
@@ -62,19 +62,13 @@ unsigned long MD5::power(int x, int y) {
 string MD5::toBitString(string msg) {
 	string bitStr = "";
 
-	for (char temp : msg) {
-		for (int i = 8; i >= 1; i--) {
-			if ((int)temp % (unsigned long)std::pow(2, i)) {
-				bitStr.push_back('1');
-			}
-			else {
-				bitStr.push_back('0');
-			}
-		}
-	}
+	for (char& _char : msg) {
+        bitStr +=bitset<8>(_char).to_string();
+    }
 
 	padding(bitStr);
 	//cout << "Exiting toBitString\n";
+	//cout << bitStr << endl;
 	return bitStr;
 }
 
@@ -122,74 +116,144 @@ unsigned long MD5::lcs(unsigned long base, unsigned long shift) {
 	return temp;
 }
 
+string MD5::binToASS(unsigned a) {
+	string output = "";
+	string bin = "";
+	char temp = (char)0;
+	for (int i = 0; i < 32; i++) {	//Convert unsigned int to binary string
+		bin.push_back((a & (unsigned)pow(2, i)) ? '1' : '0');
+	}
+	
+	for (int i = 0; i < 4; i++) { // for each byte (4 chars of binary string), convert to char
+		for (int j = 0; j < 8; j++) {
+			if (bin[(i*8)+j] == '1'){
+				temp = pow(2, j) + (int)temp;
+			}
+		}
+		output.push_back(temp);
+	}
+	return output;
+}
+
+void decToBinary(int &a)
+{
+    // array to store binary number
+    int binaryNum[32];
+ 
+    // counter for binary array
+    int i = 0;
+    while (a > 0) {
+ 
+        // storing remainder in binary array
+        binaryNum[i] = n % 2;
+        n = n / 2;
+        i++;
+    }
+	
+}
+
+
 bool MD5::hash(string msg, string& hashCode) {
 	//cout << "Entering hash!\n";
-	unsigned long A = 0x67425301; //j
-	unsigned long B = 0xefcdab89; //k
-	unsigned long C = 0x98badcfe; //l
-	unsigned long D = 0x10325476; //m
+	for (int z = 0; z < 1000; z++) {
+		unsigned A = 0x67452301; //j
+		unsigned B = 0xefcdab89; //k
+		unsigned C = 0x98badcfe; //l
+		unsigned D = 0x10325476; //m
 
-	string bitString = toBitString(msg);
-	vector<string> chunks;
+		
+		string bitString = toBitString(msg);
+		vector<string> chunks;
 
-	string tempChunk;
-	vector<int> fragments;
-	for (int i = 0; i < bitString.length() / 512; i++){
-		tempChunk = "";
-		for (int j = 0; j < 512; j++) {
-			tempChunk += bitString[(i * 512) + j];
-		}
-		chunks.push_back(tempChunk);
+		string tempChunk;
+		vector<string> fragments;
+		string tempFrag;
 
-		for (int j = 0; j < 16; j++) {
-			int tempFrag = 0;
-			for (int k = 0; k < 32; k++) {
-				int temp = tempChunk[(k + (32 * j))] - '0';
-				tempFrag += temp * pow(2, k);
+		for (int i = 0; i < bitString.length()/512; i++) {		//Split bitstring into chunks
+			tempChunk = "";
+			for (int j = 0; j < 512; j++) {
+				tempChunk.push_back(bitString[(i * 512) + j]);
 			}
-			fragments.push_back(tempFrag);
+			chunks.push_back(tempChunk);
 		}
 
-		unsigned long a = A;
-		unsigned long b = B;
-		unsigned long c = C;
-		unsigned long d = D;
-		for (int j = 0; j < 64; j++) {
-			unsigned long f, g;
-			if (0 <= j && j <= 15) {
-				f = F(b, c, d);
-				g = i;
+
+		for (int i = 0; i < chunks.size(); i++) {				//Split chunks into fragments
+			for (int j = 0; j < 16; j++){
+				tempFrag = "";
+				for (int k = 0; k < 32; k++){
+					tempFrag.push_back(chunks[i][(j * 16) + k]);
+				}
+				fragments.push_back(tempFrag);
 			}
-			else if (16 <= j && j <= 31) {
-				f = G(b, c, d);
-				g = (5 * i + 1) % 16;
-			}
-			else if (32 <= j && j <= 47) {
-				f = H(b, c, d);
-				g = (3 * i + 5) % 16;
-			}
-			else {
-				f = I(b, c, d);
-				g = 7 * i % 16;
-			}
-			f = f + a + y[i] + fragments[g];
-			a = d;
-			d = c;
-			c = b;
-			b = b + lcs(f, x[i]);
 		}
-		A += a;
-		B += b;
-		C += c;
-		D += d;
+
+		vector<unsigned> intFrags;
+		unsigned tempIntFrag = 0;
+
+		for (int i = 0; i < fragments.size(); i++) {				//Create intfrags from fragments
+			tempIntFrag = 0;
+			for (int j = 0; j < 32; j++) {
+				tempIntFrag += (fragments[i][j] - '0') * pow(2, j);
+			}
+			intFrags.push_back(tempIntFrag);
+		}
+
+		for (int i = 0; i < chunks.size(); i++) {			
+			unsigned a = A; 		//Reset values to defaults
+			unsigned b = B;
+			unsigned c = C;
+			unsigned d = D;
+
+			for (int j = 0; j < 64; j++) {				//"Main loop"
+				unsigned f, g;
+				if (0 <= j && j <= 15) {
+					f = F(b, c, d);
+					g = j;
+				}
+				else if (16 <= j && j <= 31) {
+					f = G(b, c, d);
+					g = (5 * j + 1) % 16;
+				}
+				else if (32 <= j && j <= 47) {
+					f = H(b, c, d);
+					g = (3 * j + 5) % 16;
+				}
+				else {
+					f = I(b, c, d);
+					g = (7 * j) % 16;
+				}
+
+				f = f + a + y[j] + intFrags[(16*i) + g];
+				a = d;
+				d = c;
+				c = b;
+				b = b + lcs(f, x[j]);
+			}
+			A += a;
+			B += b;
+			C += c;
+			D += d;
+		}
+		
+		//cout << A << endl << B << endl << C << endl << D << endl;
+		/*hashCode.append(A);
+		hashCode.append(B);
+		hashCode.append(C);
+		hashCode.append(D);*/
+
+		msg = hashCode;
+		if (z != 999) {
+			msg = binToASS(A) + binToASS(B) + binToASS(C) + binToASS(D);
+		} 
+		else {
+			hashCode.append(decToHexa(A));
+			hashCode.append(decToHexa(B));
+			hashCode.append(decToHexa(C));
+			hashCode.append(decToHexa(D));
+		}
 	}
-	//cout << A << endl << B << endl << C << endl << D << endl;
-	hashCode.append(decToHexa(A));
-	hashCode.append(decToHexa(B));
-	hashCode.append(decToHexa(C));
-	hashCode.append(decToHexa(D));
-
-	//cout << "Appended hash code\n";
+	cout << hashCode;
 
 	return true;
 }

@@ -93,14 +93,20 @@ bool Password::verifyPassword(string uid, string pWord){
     string salt;
     string oldHash, newHash;
     
+    //loops through the size size of records
     for(int i = 0; i < records.size(); i++) {
+        //Determines if the 
         if (records[i].userID == uid){
+            //Sets values for hash value and the salt value
             oldHash = records[i].hash;
             salt = records[i].salt;
         }
     }
-
+    
+    //Determines if the salt value is an empty string
     if (salt != ""){
+
+        //Increases pWord 
         pWord += salt;
         MD5::hash(pWord, newHash);
         if (newHash == oldHash){
@@ -132,7 +138,7 @@ bool Password::addUser(string uid, string pWord){
     string digest;
     
     string salt = makeSalt();
-    pWord += salt;
+    //pWord = pWord + salt;
     
     if (MD5::hash(pWord, digest)){
         Password::UserData newUser = Password::UserData(uid, salt, digest);

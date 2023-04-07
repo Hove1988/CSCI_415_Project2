@@ -11,6 +11,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <bitset>
 
 using namespace std;
 
@@ -58,12 +59,13 @@ private:
     static void padding(string& msg); //Append 1, 0s, and original message length
     static unsigned long power(int x, int y);
     static string decToHexa(unsigned long n);
-    static unsigned long lcs(unsigned long, unsigned long);
+    static string binToASS(unsigned a);
 
 public:
 
     inline MD5() {};
     static bool hash(string msg, string& hashCode);
+    static unsigned long lcs(unsigned long, unsigned long);
 };
 
 #endif

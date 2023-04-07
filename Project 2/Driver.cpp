@@ -8,6 +8,7 @@
 ********************************************************************************/
 #include "MD5.h"
 #include "Password.h"
+#include "RainbowTable.h"
 
 using namespace std;
 
@@ -18,17 +19,18 @@ bool rainbowAttack(Password&);
 int main() {
     
     Password passData;
-
+    //RainbowTable rainTab = new RainbowTable()
     passData.readPasswordFile("passwords.csv");
 
     int input = 0;
-    while (input != 4) {
+    while (input != 5) {
         string tempIn;
 
         cout << "1. Add User " << endl;
         cout << "2. Verify Password " << endl;
-        cout << "3. Perform Rainbow Attack " << endl;
-        cout << "4. Exit" << endl;
+        cout << "3. Create Rainbow Table" << endl;
+        cout << "4. Perform Rainbow Attack " << endl;
+        cout << "5. Exit" << endl;
         cout << "Input: ";
 
         cin >> tempIn;
@@ -42,6 +44,9 @@ int main() {
                 verifyPass(passData);
                 break;
             case 3:
+                //createTable();
+                break;
+            case 4:
                 rainbowAttack(passData);
                 break;
             default:
