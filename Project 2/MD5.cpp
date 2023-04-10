@@ -47,32 +47,28 @@ void MD5::padding(string& msg) {
 	//cout << "Exiting padding\n";
 }
 
-unsigned long MD5::power(int x, int y) {
-	//cout << "x: " << x << "y: " << y << endl;
-	unsigned long long z = x;
-	//cout << "z original: "<< z << endl;
-	for (int i = 1; i < y - 1; i++) {
-		//cout << i << ' ';
-		z *= x;
-		//cout << i << "th z: " << z << endl;
-	}
-	return z;
-}
-
 string MD5::toBitString(string msg) {
 	string bitStr = "";
-
+	/*
+  	for (int i = 0; i < msg.size(); ++i)
+  	{
+      bitStr.append(bitset<8>(msg[i]).to_string());
+  	}
+	return bitStr;
+	*/
+	
 	for (char& _char : msg) {
         bitStr +=bitset<8>(_char).to_string();
     }
 
-	padding(bitStr);
+	reverse(bitStr.begin(), bitStr.end());		//To make little endian
+	padding(bitStr);							//Correct order?!? reverse then padding?
 	//cout << "Exiting toBitString\n";
-	//cout << bitStr << endl;
+	//cout << "Bit string: " << bitStr << endl;
 	return bitStr;
 }
 
-string MD5::decToHexa(unsigned long n)
+string MD5::decToHexa(unsigned n)		//CORRECT
 {
     // ans string to store hexadecimal number
     string ans = "";
@@ -110,20 +106,20 @@ string MD5::decToHexa(unsigned long n)
     return ans;
 }
 
-unsigned long MD5::lcs(unsigned long base, unsigned long shift) {
+unsigned MD5::lcs(unsigned base, unsigned shift) {
 
-	unsigned long temp = (base << shift) | (base >> (64 - shift));
-	return temp;
+	return (base << shift) | (base >> (32 - shift));
 }
 
-string MD5::binToASS(unsigned a) {
+string MD5::binToASS(unsigned a) {	//ASCII
+	cout << "before conversion: " << a << endl;
 	string output = "";
 	string bin = "";
 	char temp = (char)0;
 	for (int i = 0; i < 32; i++) {	//Convert unsigned int to binary string
 		bin.push_back((a & (unsigned)pow(2, i)) ? '1' : '0');
 	}
-	
+	cout << "binary: " << bin << endl;
 	for (int i = 0; i < 4; i++) { // for each byte (4 chars of binary string), convert to char
 		for (int j = 0; j < 8; j++) {
 			if (bin[(i*8)+j] == '1'){
@@ -132,11 +128,16 @@ string MD5::binToASS(unsigned a) {
 		}
 		output.push_back(temp);
 	}
+	cout << "after conversion: " << output << endl;
+	//cout << "after conversion binary: " << (stoi(output) & 0xffffffff) << endl;
+	//printf("printf: %b", output);
 	return output;
 }
 
+
 void decToBinary(int &a)
 {
+	cout << "before conversion: " << a << endl;
     // array to store binary number
     int binaryNum[32];
  
@@ -145,21 +146,22 @@ void decToBinary(int &a)
     while (a > 0) {
  
         // storing remainder in binary array
-        binaryNum[i] = n % 2;
-        n = n / 2;
+        binaryNum[i] = a % 2;
+        a = a / 2;
         i++;
     }
-	
+	cout << "after conversion: " << a << endl;
 }
 
 
 bool MD5::hash(string msg, string& hashCode) {
 	//cout << "Entering hash!\n";
-	for (int z = 0; z < 1000; z++) {
+	//for (int z = 0; z < 1000; z++) {
 		unsigned A = 0x67452301; //j
 		unsigned B = 0xefcdab89; //k
 		unsigned C = 0x98badcfe; //l
 		unsigned D = 0x10325476; //m
+	
 
 		
 		string bitString = toBitString(msg);
@@ -243,17 +245,21 @@ bool MD5::hash(string msg, string& hashCode) {
 		hashCode.append(D);*/
 
 		msg = hashCode;
-		if (z != 999) {
-			msg = binToASS(A) + binToASS(B) + binToASS(C) + binToASS(D);
-		} 
-		else {
+		//if (z != 999) {
+		//msg = binToASS(A) + binToASS(B) + binToASS(C) + binToASS(D);
+		//} 
+		//else {
+			//hashCode.append(to_string(A));
+			//hashCode.append(to_string(B));
+			//hashCode.append(to_string(C));
+			//hashCode.append(to_string(D));
 			hashCode.append(decToHexa(A));
 			hashCode.append(decToHexa(B));
 			hashCode.append(decToHexa(C));
 			hashCode.append(decToHexa(D));
-		}
-	}
-	cout << hashCode;
+		//}
+	//}
+	//cout << hashCode;
 
 	return true;
 }

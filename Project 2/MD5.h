@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <bitset>
+#include <algorithm>
 
 using namespace std;
 
@@ -47,25 +48,25 @@ private:
 
 
     /********** MD5 operations **********/
-    static inline unsigned long F(unsigned long x, unsigned long y, unsigned long z) { return ((x & y) | (~x & z)); }
-    static inline unsigned long G(unsigned long x, unsigned long y, unsigned long z) { return ((x & z) | (y & ~z)); }
-    static inline unsigned long H(unsigned long x, unsigned long y, unsigned long z) { return (x ^ y ^ z); }
-    static inline unsigned long I(unsigned long x, unsigned long y, unsigned long z) { return (y ^ (x | ~z)); }
+    static inline unsigned F(unsigned x, unsigned y, unsigned z) { return ((x & y) | (~x & z)); }
+    static inline unsigned G(unsigned x, unsigned y, unsigned z) { return ((x & z) | (y & ~z)); }
+    static inline unsigned H(unsigned x, unsigned y, unsigned z) { return (x ^ y ^ z); }
+    static inline unsigned I(unsigned x, unsigned y, unsigned z) { return (y ^ (x | ~z)); }
 
     //void append1(string msg);
 
     /******** Helper functions ********/
     static string toBitString(string msg); //Convert string to bit string
     static void padding(string& msg); //Append 1, 0s, and original message length
-    static unsigned long power(int x, int y);
-    static string decToHexa(unsigned long n);
+    static string decToHexa(unsigned n);
     static string binToASS(unsigned a);
+    //static void decToBinary(unsigned &a);
 
 public:
 
     inline MD5() {};
     static bool hash(string msg, string& hashCode);
-    static unsigned long lcs(unsigned long, unsigned long);
+    static unsigned lcs(unsigned, unsigned );
 };
 
 #endif

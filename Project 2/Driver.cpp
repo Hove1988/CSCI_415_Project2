@@ -14,11 +14,13 @@ using namespace std;
 
 bool createNewUser(Password&);
 bool verifyPass(Password&);
-bool rainbowAttack(Password&);
+bool rainbowAttack(Password&, RainbowTable&);
+RainbowTable createTable(Password&);
 
 int main() {
     
     Password passData;
+    RainbowTable rt(10, 10);
     //RainbowTable rainTab = new RainbowTable()
     passData.readPasswordFile("passwords.csv");
 
@@ -44,16 +46,24 @@ int main() {
                 verifyPass(passData);
                 break;
             case 3:
-                //createTable();
+                rt = createTable(passData);
                 break;
             case 4:
-                rainbowAttack(passData);
+                rainbowAttack(passData, rt);
                 break;
             default:
                 passData.writePasswordFile("passwords.csv");
                 return 0;
         };
     }
+}
+
+RainbowTable createTable(Password& pData) {
+
+    RainbowTable rt(10, 10);
+
+    rt.createTable();
+    return rt;
 }
 
 bool createNewUser(Password& pData){
@@ -89,7 +99,12 @@ bool verifyPass(Password& pData) {
 
 }
 
-bool rainbowAttack(Password& pData){
-    
-    return true;
+bool rainbowAttack(Password& pData, RainbowTable& rt){
+    if (rt.attack("w8adwY78")) {
+        cout << "Password Found\n";
+        return true;
+    }
+
+    cout << "Password Not Found\n";
+    return false;
 }
