@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
 *
 *	Password.cpp
 *
@@ -11,8 +11,19 @@
 
 using namespace std;
 
+/*
+* @brief    constructor
+* @pre      none
+* @post     returns a password object
+*/
 Password::Password() {};
 
+/*
+* @brief    reads a password record from a file
+* @param    string: filepath
+* @pre      file is a valid file path to a passwords record file
+* @post     returns T/F if the read was successful. password records are stored in the password object
+*/
 bool Password::readPasswordFile(string file){
     
     //Local Variables
@@ -51,7 +62,7 @@ bool Password::readPasswordFile(string file){
                 tempDigest.push_back(line[i]);
             }
         }
-        records.push_back(Password::UserData(tempID, tempSalt, tempDigest));
+        records.push_back(UserData(tempID, tempSalt, tempDigest));
     }
 
     //Close the file
@@ -61,7 +72,12 @@ bool Password::readPasswordFile(string file){
     return true;
 }
 
-
+/*
+* @brief    write existing password records to a file
+* @param    string: filepath
+* @pre      file is a valid filepath
+* @post     returns T/F if write was successful. password records are written to the file
+*/
 bool Password::writePasswordFile(string file){
     //Variable
     ofstream outFile;
@@ -86,7 +102,12 @@ bool Password::writePasswordFile(string file){
     return true;
 }
 
-
+/*
+* @brief    checks a password against a user ID to verify the correct password is entered
+* @param    string: user ID ; string: password
+* @pre      uid is an existing user, pWord is a candidate password to verify
+* @post     returns T/F if the password correctly hashes to the stored hash value
+*/
 bool Password::verifyPassword(string uid, string pWord){
 
     //Variables
@@ -108,15 +129,20 @@ bool Password::verifyPassword(string uid, string pWord){
 
         //Increases pWord 
         pWord += salt;
-        MD5::hash(pWord, newHash);
+        newHash = MD5::crypt(pWord);
         if (newHash == oldHash){
+            cout << "Your hash is: " << newHash << endl;
             return true;
         }
     }
     return false;
 }
 
-
+/*
+* @brief    generator to create a random character string to use as a salt value
+* @pre      none
+* @post     returns a randomly generated 6 character string
+*/
 string Password::makeSalt(){
     srand(time(0));
     string salt;
@@ -133,18 +159,22 @@ string Password::makeSalt(){
     return salt;
 }
 
-
+/*
+* @brief    add a new user to the system; uses a user name and a password to be crypted by MD5
+* @param    string: uid
+* @param    string: pWord
+* @pre      uid must be unique; pWord must be plaintext
+* @post     adds a new user to records with the uid, salt, and md5 hash
+*/
 bool Password::addUser(string uid, string pWord){
-    string digest;
     
     string salt = makeSalt();
-    //pWord = pWord + salt;
+    pWord = pWord + salt;
     
-    if (MD5::hash(pWord, digest)){
-        Password::UserData newUser = Password::UserData(uid, salt, digest);
-        records.push_back(newUser);
-        return true;
-    }
+    string digest = MD5::crypt(pWord);
+    UserData newUser = UserData(uid, salt, digest);
+    records.push_back(newUser);
+    return true;
     
     return false;
 }

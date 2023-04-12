@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
 *
 *	Password.h
 *
@@ -20,6 +20,22 @@
 
 using namespace std;
 
+struct UserData {
+	UserData(string uid, string slt, string md) {
+		userID = uid;
+		salt = slt;
+		hash = md;
+	};
+
+	string toString() {
+		return userID + ',' + salt + ',' + hash + '\n';
+	};
+
+	string userID;
+	string salt;
+	string hash;
+};
+
 class Password {
 public:
 
@@ -31,25 +47,11 @@ public:
 	bool writePasswordFile(string);
 	bool verifyPassword(string, string);
 	bool addUser(string, string);
+
+	vector<UserData> getUserData() { return records; }
     
 
 private:
-
-	struct UserData {
-		UserData(string uid, string slt, string md){
-			userID = uid;
-			salt = slt;
-			hash = md;
-		};
-		
-		string toString() {
-			return userID + ',' + salt + ',' + hash + '\n';
-		};
-
-		string userID;
-		string salt;
-		string hash;
-	};
 
 	vector<UserData> records;
 	string makeSalt();
